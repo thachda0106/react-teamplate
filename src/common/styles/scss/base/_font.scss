@@ -1,0 +1,14 @@
+$f: 10;
+@while $f <=50 {
+  .fs-#{$f} {
+    font-size: 1px * $f;
+  }
+
+  $f: $f + 2;
+}
+
+@each $font-weight, $font-value in $font-array {
+  .fw-#{$font-weight} {
+    font-weight: $font-value;
+  }
+}

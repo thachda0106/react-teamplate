@@ -1,0 +1,77 @@
+@mixin respond-above($breakpoint) {
+  @if map-has-key($breakpoints, $breakpoint) {
+    $breakpoint-value: map-get($breakpoints, $breakpoint);
+
+    @media only screen and (min-width: $breakpoint-value) {
+      @content;
+    }
+  } @else {
+    @warn 'Invalid breakpoint: #{$breakpoint}.';
+  }
+}
+
+@mixin respond-below($breakpoint) {
+  @if map-has-key($breakpoints, $breakpoint) {
+    $breakpoint-value: map-get($breakpoints, $breakpoint);
+
+    @media only screen and (max-width: ($breakpoint-value - 1)) {
+      @content;
+    }
+  } @else {
+    @warn 'Invalid breakpoint: #{$breakpoint}.';
+  }
+}
+
+@mixin respond-between($lower, $upper) {
+  @if map-has-key($breakpoints, $lower) and map-has-key($breakpoints, $upper) {
+    $lower-breakpoint: map-get($breakpoints, $lower);
+    $upper-breakpoint: map-get($breakpoints, $upper);
+
+    @media (min-width: $lower-breakpoint) and (max-width: ($upper-breakpoint - 1)) {
+      @content;
+    }
+  } @else {
+    @if (map-has-key($breakpoints, $lower) ==false) {
+      @warn 'Your lower breakpoint was invalid: #{$lower}.';
+    }
+
+    @if (map-has-key($breakpoints, $upper) ==false) {
+      @warn 'Your upper breakpoint was invalid: #{$upper}.';
+    }
+  }
+}
+
+@mixin pxRem($property, $values) {
+  $px-values: ();
+  $rem-values: ();
+
+  @if type-of($values) != "list" {
+    $values: join((), $values);
+  }
+
+  @each $value in $values {
+    @if type-of($value) ==number and (unitless($value) or unit($value) ==px) {
+      $px-values: join($px-values, 0px + ($value));
+      $rem-values: join($rem-values, convertPxToRem($value));
+    } @else {
+      $px-values: join($px-values, $value);
+      $rem-values: join($rem-values, $value);
+    }
+  }
+
+  #{$property}: $px-values;
+
+  @if $px-values !=$rem-values {
+    #{$property}: $rem-values;
+  }
+}
+
+@each $color-name, $color-value in $colors {
+  .text-#{"" + $color-name} {
+    color: $color-value;
+  }
+
+  .bg-#{"" + $color-name} {
+    background-color: $color-value;
+  }
+}
